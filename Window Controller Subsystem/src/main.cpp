@@ -1,18 +1,26 @@
 #include <Arduino.h>
+#include "WindowManagerMachine.h"
+#include "kernel/task/servoTask.h"
+#include "kernel/Task.h"
+#include "kernel/Scheduler.h"
+#include "kernel/Logger.h"
+#include "kernel/MsgService.h"
 
-// put function declarations here:
-int myFunction(int, int);
+WMMSystem *machine;
+Scheduler sched;
+void setup()
+{
+  MsgService.init();
+  sched.init(100);
+  pinMode(BUZZER_PIN, OUTPUT);
+  machine = new WMMSystem();
 
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Task *servoTask = new ServoTask(machine);
+  servoTask->init(100);
+  sched.addTask(servoTask);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void loop()
+{
+  sched.schedule();
 }

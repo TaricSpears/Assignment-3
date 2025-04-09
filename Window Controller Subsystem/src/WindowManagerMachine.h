@@ -2,10 +2,10 @@
 #define __WMM__
 
 #include <Arduino.h>
-#include "include/Button.h"
-#include "include/ServoMotor.h"
-#include "include/LCD.h"
-#include "include/Pot.h"
+#include "../include/Button.h"
+#include "../include/ServoMotor.h"
+#include "../include/LCD.h"
+#include "../include/Pot.h"
 #define OPEN 90
 #define CLOSE 0
 

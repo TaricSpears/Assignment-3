@@ -1,5 +1,5 @@
 #include "WindowManagerMachine.h"
-#include "include/set_up.h"
+#include "../include/set_up.h"
 
 WMMSystem::WMMSystem()
 {
@@ -17,10 +17,10 @@ WMMSystem::WMMSystem()
 
     temperature = 20;
     openDegreeServo = 0;
-}   
+}
 
 void WMMSystem::switchState()
-{   
+{
     state = (state == MANUAL) ? NORMAL : MANUAL;
 }
 
@@ -70,7 +70,7 @@ void WMMSystem::openServo(int degree)
 }
 
 void WMMSystem::openManualServo()
-{   
+{
     if (state != MANUAL)
         return;
     openDegreeServo = manualSignal->getDegree();

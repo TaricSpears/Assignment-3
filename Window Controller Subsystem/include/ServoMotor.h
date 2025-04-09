@@ -1,13 +1,12 @@
 #ifndef __SERVO_MOTOR__
 #define __SERVO_MOTOR__
 
-
 #include <arduino.h>
 
-#include <Servo.h>	
+#include <Servo.h>
 
-
-class ServoMotor{
+class ServoMotor
+{
 
 public:
   ServoMotor(int pin);
@@ -16,10 +15,11 @@ public:
   void off();
   void fullyOpen();
   void close();
-  void openDegree(int angle);  
+  void openDegree(int angle);
+
 private:
-  int pin; 
-  Servo motor; 
+  int pin;
+  Servo motor;
 };
 
 #endif

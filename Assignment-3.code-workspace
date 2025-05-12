@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "name": "ControlUnit (CMake)",
+      "path": "./ControlUnit"
+    },
+    {
+      "name": "TemperatureMonitoring (PlatformIO)",
+      "path": "./Temperature Monitoring"
+    },
+    {
+      "name": "WindowController (PlatformIO)",
+      "path": "./Window Controller Subsystem"
+    },
+    {
+      "name": "Shared Config",
+      "path": "./.vscode"
+    }
+  ],
+  "settings": {
+    "workbench.colorTheme": "Default Dark+",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "platformio-ide.autoRefreshEnvironment": true,
+    "cmake.configureOnOpen": false
+  }
+}

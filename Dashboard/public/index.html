@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Dashboard</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Smart Temperature Monitoring</h1>
+
+        <!-- Temperature Chart -->
+        <div class="chart-container">
+            <canvas id="temperatureChart"></canvas>
+        </div>
+
+        <!-- System Status -->
+        <div class="status-container">
+            <h2>System State: <span id="systemState">NORMAL</span></h2>
+            <p>Window Opening: <span id="windowOpening">0</span>%</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button id="autoModeBtn">AUTO MODE</button>
+            <button id="manualModeBtn">MANUAL MODE</button>
+            <div id="manualControl" style="display: none;">
+                <input type="range" id="manualSlider" min="0" max="100" value="0">
+                <button id="ackAlarmBtn">Acknowledge Alarm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../src/api/client.js"></script>
+    <script src="../src/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+h1,
+h2 {
+    color: #333;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 2rem;
+}
+
+.status-container {
+    margin-bottom: 2rem;
+}
+
+.status-container span {
+    font-weight: bold;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.controls button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #007acc;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#manualControl {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+#manualControl input[type="range"] {
+    width: 150px;
+}

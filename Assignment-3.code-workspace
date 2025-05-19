@@ -25,6 +25,7 @@
     "workbench.colorTheme": "Dark High Contrast",
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "platformio-ide.autoRefreshEnvironment": true,
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "liveServer.settings.multiRootWorkspaceName": "Dashboard"
   }
 }

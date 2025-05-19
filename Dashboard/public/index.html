@@ -1,41 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Temperature Dashboard</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Temperature Dashboard</title>
+    <link rel="stylesheet" href="styles/main.css" />
 </head>
 
 <body>
-    <div class="container">
+    <header>
         <h1>Smart Temperature Monitoring</h1>
+    </header>
 
-        <!-- Temperature Chart -->
-        <div class="chart-container">
+    <main>
+        <section class="chart-container">
             <canvas id="temperatureChart"></canvas>
-        </div>
+        </section>
 
-        <!-- System Status -->
-        <div class="status-container">
-            <h2>System State: <span id="systemState">NORMAL</span></h2>
-            <p>Window Opening: <span id="windowOpening">0</span>%</p>
-        </div>
+        <section class="status">
+            <p>Stato sistema: <span id="systemState">--</span></p>
+            <p>Apertura finestra: <span id="windowOpening">--</span>%</p>
+        </section>
 
-        <!-- Controls -->
-        <div class="controls">
-            <button id="autoModeBtn">AUTO MODE</button>
-            <button id="manualModeBtn">MANUAL MODE</button>
-            <div id="manualControl" style="display: none;">
-                <input type="range" id="manualSlider" min="0" max="100" value="0">
-                <button id="ackAlarmBtn">Acknowledge Alarm</button>
+        <section class="controls">
+            <button id="autoModeBtn">Automatico</button>
+            <button id="manualModeBtn">Manuale</button>
+            <div id="manualControl" class="hidden">
+                <input type="range" id="manualSlider" min="0" max="100" />
             </div>
-        </div>
-    </div>
+            <button id="ackAlarmBtn">Riconosci Allarme</button>
+        </section>
+    </main>
 
-    <script src="../src/api/client.js"></script>
-    <script src="../src/app.js"></script>
+    <script type="module" src="../src/app.js"></script>
 </body>
 
 </html>

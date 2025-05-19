@@ -1,8 +1,8 @@
 const API_BASE_URL = 'http://localhost:3000/api';
 
 export async function fetchTemperatureData() {
-    const response = await fetch(`${API_BASE_URL}/temperature`);
-    return response.json();
+    const res = await fetch(`${API_BASE_URL}/temperature`);
+    return res.json();
 }
 
 export async function setMode(mode) {

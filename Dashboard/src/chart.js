@@ -4,9 +4,8 @@ export function createTemperatureChart(ctx) {
     return new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [],
-            datasets: [{
-                label: 'Temperature (°C)',
+            labels: [], datasets: [{
+                label: 'Temperatura (°C)',
                 data: [],
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -14,8 +13,8 @@ export function createTemperatureChart(ctx) {
         },
         options: {
             scales: {
-                x: { title: { display: true, text: 'Time' } },
-                y: { title: { display: true, text: 'Temperature (°C)' } }
+                x: { title: { display: true, text: 'Ora' } },
+                y: { title: { display: true, text: 'Temperatura (°C)' } }
             }
         }
     });

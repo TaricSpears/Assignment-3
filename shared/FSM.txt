@@ -1,0 +1,24 @@
+stateDiagram
+  direction TB
+  state Modalità {
+    direction TB
+    Auto --> Manual:Button
+    Manual --> Auto:Button
+    Auto
+    Manual
+  }
+  state Temperatura{
+  Normal --> Hot:T >= T1
+  Hot --> TooHot:T > T2
+  TooHot --> Alarm
+  Alarm --> Normal:onButtonClick
+  Hot --> Normal:T < T1
+  TooHot --> Hot:T <= T2
+  }
+  state Finestra{
+  Closed --> Open
+  Open --> FullyOpen
+  FullyOpen --> Open
+  Open --> Closed
+  }
+

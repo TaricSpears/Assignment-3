@@ -1,0 +1,3 @@
+adafruit/Adafruit Unified Sensor @ ^1.1.4
+pubsubclient/PubSubClient @ ^2.8
+mathertel/OneWire @ ^2.3.5

@@ -1,5 +1,3 @@
-import Chart from 'chart.js/auto';
-
 export function createTemperatureChart(ctx) {
     return new Chart(ctx, {
         type: 'line',

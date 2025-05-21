@@ -9,7 +9,7 @@ const chart = createTemperatureChart(ctx);
 const systemStateEl = document.getElementById('systemState');
 const windowOpeningEl = document.getElementById('windowOpening');
 const manualSlider = document.getElementById('manualSlider');
-nsetInterval(async () => {
+setInterval(async () => {
     const data = await fetchTemperatureData();
 
     chart.data.labels = data.map(e => new Date(e.timestamp).toLocaleTimeString());

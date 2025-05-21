@@ -1,5 +1,5 @@
 import { createTemperatureChart } from './chart.js';
-import { fetchTemperatureData, setMode, setWindowOpening, acknowledgeAlarm } from './api/client.js'; // Assuming client.js is in 'api' folder
+import { fetchTemperatureData, setMode, setWindowOpening, acknowledgeAlarm, getSystemState, getWindowOpening } from './api/client.js'; // Assuming client.js is in 'api' folder
 
 const ctx = document.getElementById('temperatureChart').getContext('2d');
 const chart = createTemperatureChart(ctx);
@@ -19,14 +19,12 @@ const alarmAreaEl = document.getElementById('alarmArea');
 const ackAlarmBtn = document.getElementById('ackAlarmBtn');
 
 let currentSystemMode = 'AUTOMATIC';
-let currentSensorData = { temperature: null, state: 'UNKNOWN', windowOpening: 0 };
+let currentState = { temperature: null, state: 'UNKNOWN', windowOpening: 0 };
 
 function updateUI() {
     currentModeDisplayEl.textContent = currentSystemMode.charAt(0).toUpperCase() + currentSystemMode.slice(1).toLowerCase();
-
-    systemStateDisplayEl.textContent = currentSensorData.state;
-
-    windowOpeningDisplayEl.textContent = currentSensorData.windowOpening;
+    systemStateDisplayEl.textContent = currentState.state;
+    windowOpeningDisplayEl.textContent = currentState.windowOpening;
 
     if (currentSystemMode === 'AUTOMATIC') {
         autoModeBtn.classList.add('active');
@@ -36,10 +34,10 @@ function updateUI() {
         manualModeBtn.classList.add('active');
         autoModeBtn.classList.remove('active');
         manualControlAreaEl.classList.remove('hidden');
-        manualSliderEl.value = currentSensorData.windowOpening;
-        manualSliderValueEl.textContent = currentSensorData.windowOpening;
+        manualSliderEl.value = currentState.windowOpening;
+        manualSliderValueEl.textContent = currentState.windowOpening;
     }
-    if (currentSensorData.state === 'ALARM') {
+    if (currentState.state === 'ALARM') {
         alarmAreaEl.classList.remove('hidden');
     } else {
         alarmAreaEl.classList.add('hidden');
@@ -48,17 +46,20 @@ function updateUI() {
 
 async function refreshData() {
     try {
-        const data = await fetchTemperatureData();
-        if (data && data.length > 0) {
-            chart.data.labels = data.map(e => new Date(e.timestamp).toLocaleTimeString());
-            chart.data.datasets[0].data = data.map(e => e.temperature);
+        const temperature_data = await fetchTemperatureData();
+        const window_opening = await getWindowOpening();
+        const system_state = await getSystemState();
+        if (temperature_data && temperature_data.length > 0) {
+            chart.data.labels = temperature_data.map(e => new Date(e.timestamp).toLocaleTimeString());
+            chart.data.datasets[0].data = temperature_data.map(e => e.temperature);
             chart.update();
-        } else {
-            currentSensorData.state = "No data";
         }
+        currentState.temperature = temperature_data[temperature_data.length - 1].temperature;
+        currentState.windowOpening = window_opening;
+        currentState.state = system_state;
     } catch (error) {
-        console.error("Failed to fetch temperature data:", error);
-        currentSensorData.state = "Error fetching data";
+        console.error("Failed to fetch data:", error);
+        currentState.state = "Error fetching data";
     }
     updateUI();
 }
@@ -95,7 +96,7 @@ manualSliderEl.addEventListener('change', async (e) => {
     const percentage = parseInt(e.target.value, 10);
     try {
         await setWindowOpening(percentage);
-        currentSensorData.windowOpening = percentage;
+        currentState.windowOpening = percentage;
         console.log(`Window opening set to ${percentage}%`);
         updateUI();
     } catch (error) {

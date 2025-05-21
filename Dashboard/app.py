@@ -21,11 +21,30 @@ def set_mode():
     return Response(status=200)
 
 
-@app.route('/api/window', methods=['POST'])
+@app.route('/api/setwindow', methods=['POST'])
 def set_window_opening():
     body = request.get_json()
     print(body)
     return Response(status=200)
+
+
+@app.route('/api/getwindow', methods=['GET'])
+def get_window_opening():
+    return json.dumps({
+        "value": random.randint(0, 100)
+    })
+
+
+@app.route('/api/getstate', methods=['GET'])
+def get_state():
+    return json.dumps({
+        "value": random.choice([
+            "NORMAL",
+            "HOT",
+            "TOO_HOT",
+            "ALARM"
+        ])
+    })
 
 
 @app.route('/api/alarm', methods=['POST'])

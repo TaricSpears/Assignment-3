@@ -8,7 +8,7 @@ export async function fetchTemperatureData() {
 }
 
 export async function setMode(mode) {
-    await fetch(`${API_BASE_URL}/mode`, {
+    await fetch(`${API_BASE_URL}/setmode`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode })

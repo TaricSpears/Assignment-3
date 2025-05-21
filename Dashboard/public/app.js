@@ -23,7 +23,9 @@ setInterval(async () => {
 
 // Event listeners
 
-document.getElementById('autoModeBtn').addEventListener('click', () => setMode('AUTOMATIC'));
+document.getElementById('autoModeBtn').addEventListener('click', () => {
+    document.getElementById('manualControl').classList.add('hidden'); setMode('AUTOMATIC')
+});
 
 document.getElementById('manualModeBtn').addEventListener('click', () => {
     setMode('MANUAL');

@@ -5,39 +5,121 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 1rem;
-    background: #f5f5f5;
+    background: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 header h1 {
-    text-align: center;
-    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
 }
 
 .chart-container {
-    max-width: 600px;
-    margin: 0 auto 1rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.status-controls-container {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 600px) {
+    .status-controls-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
 }
 
 .status,
 .controls {
-    max-width: 600px;
-    margin: 0.5rem auto;
-    padding: 1rem;
+    padding: 1.5rem;
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status h2,
+.controls h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #34495e;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.status p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.status p strong {
+    color: #555;
 }
 
 .controls button {
     margin-right: 0.5rem;
-    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1.25rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: white;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
+}
+
+.controls button:hover {
+    background-color: #2980b9;
+}
+
+.controls button.active {
+    background-color: #2ecc71;
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+}
+
+.controls button.alarm-btn {
+    background-color: #e74c3c;
+}
+
+.controls button.alarm-btn:hover {
+    background-color: #c0392b;
+}
+
+#manualControlArea {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+#manualControlArea label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+#manualControlArea input[type="range"] {
+    width: 100%;
     cursor: pointer;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }

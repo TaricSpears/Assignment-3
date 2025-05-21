@@ -1,37 +1,123 @@
 import { createTemperatureChart } from './chart.js';
-import { fetchTemperatureData, setMode, setWindowOpening, acknowledgeAlarm } from './api/client.js';
+import { fetchTemperatureData, setMode, setWindowOpening, acknowledgeAlarm } from './api/client.js'; // Assuming client.js is in 'api' folder
 
-// Inizializzo Chart
 const ctx = document.getElementById('temperatureChart').getContext('2d');
 const chart = createTemperatureChart(ctx);
 
-// Elementi DOM
-const systemStateEl = document.getElementById('systemState');
-const windowOpeningEl = document.getElementById('windowOpening');
-const manualSlider = document.getElementById('manualSlider');
-setInterval(async () => {
-    const data = await fetchTemperatureData();
+const currentModeDisplayEl = document.getElementById('currentModeDisplay');
+const systemStateDisplayEl = document.getElementById('systemStateDisplay');
+const windowOpeningDisplayEl = document.getElementById('windowOpeningDisplay');
 
-    chart.data.labels = data.map(e => new Date(e.timestamp).toLocaleTimeString());
-    chart.data.datasets[0].data = data.map(e => e.temperature);
-    chart.update();
+const autoModeBtn = document.getElementById('autoModeBtn');
+const manualModeBtn = document.getElementById('manualModeBtn');
 
-    const latest = data[data.length - 1];
-    systemStateEl.textContent = latest.state;
-    windowOpeningEl.textContent = latest.windowOpening;
-}, 2000);
+const manualControlAreaEl = document.getElementById('manualControlArea');
+const manualSliderEl = document.getElementById('manualSlider');
+const manualSliderValueEl = document.getElementById('manualSliderValue');
 
-// Event listeners
+const alarmAreaEl = document.getElementById('alarmArea');
+const ackAlarmBtn = document.getElementById('ackAlarmBtn');
 
-document.getElementById('autoModeBtn').addEventListener('click', () => {
-    document.getElementById('manualControl').classList.add('hidden'); setMode('AUTOMATIC')
+let currentSystemMode = 'AUTOMATIC';
+let currentSensorData = { temperature: null, state: 'UNKNOWN', windowOpening: 0 };
+
+function updateUI() {
+    currentModeDisplayEl.textContent = currentSystemMode.charAt(0).toUpperCase() + currentSystemMode.slice(1).toLowerCase();
+
+    systemStateDisplayEl.textContent = currentSensorData.state;
+
+    windowOpeningDisplayEl.textContent = currentSensorData.windowOpening;
+
+    if (currentSystemMode === 'AUTOMATIC') {
+        autoModeBtn.classList.add('active');
+        manualModeBtn.classList.remove('active');
+        manualControlAreaEl.classList.add('hidden');
+    } else if (currentSystemMode === 'MANUAL') {
+        manualModeBtn.classList.add('active');
+        autoModeBtn.classList.remove('active');
+        manualControlAreaEl.classList.remove('hidden');
+        manualSliderEl.value = currentSensorData.windowOpening;
+        manualSliderValueEl.textContent = currentSensorData.windowOpening;
+    }
+    if (currentSensorData.state === 'ALARM') {
+        alarmAreaEl.classList.remove('hidden');
+    } else {
+        alarmAreaEl.classList.add('hidden');
+    }
+}
+
+async function refreshData() {
+    try {
+        const data = await fetchTemperatureData();
+        if (data && data.length > 0) {
+            chart.data.labels = data.map(e => new Date(e.timestamp).toLocaleTimeString());
+            chart.data.datasets[0].data = data.map(e => e.temperature);
+            chart.update();
+        } else {
+            currentSensorData.state = "No data";
+        }
+    } catch (error) {
+        console.error("Failed to fetch temperature data:", error);
+        currentSensorData.state = "Error fetching data";
+    }
+    updateUI();
+}
+
+autoModeBtn.addEventListener('click', async () => {
+    try {
+        await setMode('AUTOMATIC');
+        currentSystemMode = 'AUTOMATIC';
+        console.log('Mode set to AUTOMATIC');
+        updateUI();
+    } catch (error) {
+        console.error("Failed to set mode to AUTOMATIC:", error);
+        alert("Error setting mode to Automatic. Please try again.");
+    }
 });
 
-document.getElementById('manualModeBtn').addEventListener('click', () => {
-    setMode('MANUAL');
-    document.getElementById('manualControl').classList.remove('hidden');
+manualModeBtn.addEventListener('click', async () => {
+    try {
+        await setMode('MANUAL');
+        currentSystemMode = 'MANUAL';
+        console.log('Mode set to MANUAL');
+        updateUI();
+    } catch (error) {
+        console.error("Failed to set mode to MANUAL:", error);
+        alert("Error setting mode to Manual. Please try again.");
+    }
 });
 
-manualSlider.addEventListener('input', e => setWindowOpening(e.target.value));
+manualSliderEl.addEventListener('input', (e) => {
+    manualSliderValueEl.textContent = e.target.value;
+});
 
-document.getElementById('ackAlarmBtn').addEventListener('click', () => acknowledgeAlarm());
+manualSliderEl.addEventListener('change', async (e) => {
+    const percentage = parseInt(e.target.value, 10);
+    try {
+        await setWindowOpening(percentage);
+        currentSensorData.windowOpening = percentage;
+        console.log(`Window opening set to ${percentage}%`);
+        updateUI();
+    } catch (error) {
+        console.error("Failed to set window opening:", error);
+        alert("Error setting window opening. Please try again.");
+    }
+});
+
+ackAlarmBtn.addEventListener('click', async () => {
+    try {
+        await acknowledgeAlarm();
+        console.log('Alarm acknowledged');
+        await refreshData();
+    } catch (error) {
+        console.error("Failed to acknowledge alarm:", error);
+        alert("Error acknowledging alarm. Please try again.");
+    }
+});
+
+async function initializeApp() {
+    await refreshData();
+    setInterval(refreshData, 3000);
+}
+
+initializeApp();

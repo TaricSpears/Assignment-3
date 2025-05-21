@@ -11,7 +11,7 @@
 
 <body>
     <header>
-        <h1>Smart Temperature Monitoring</h1>
+        <h1>Smart Temperature Monitoring 🌡️</h1>
     </header>
 
     <main>
@@ -19,23 +19,33 @@
             <canvas id="temperatureChart"></canvas>
         </section>
 
-        <section class="status">
-            <p>Stato sistema: <span id="systemState">--</span></p>
-            <p>Apertura finestra: <span id="windowOpening">--</span>%</p>
-        </section>
+        <div class="status-controls-container">
+            <section class="status">
+                <h2>📄 System Status</h2>
+                <p><strong>Current Mode:</strong> <span id="currentModeDisplay">--</span></p>
+                <p><strong>System State:</strong> <span id="systemStateDisplay">--</span></p>
+                <p><strong>Window Opening:</strong> <span id="windowOpeningDisplay">--</span>%</p>
+            </section>
 
-        <section class="controls">
-            <button id="autoModeBtn">Automatico</button>
-            <button id="manualModeBtn">Manuale</button>
-            <div id="manualControl" class="hidden">
-                <label for="manualSlider">Window opening:</label>
-                <input type="range" id="manualSlider" min="0" max="100" />
-            </div>
-            <button id="ackAlarmBtn">Riconosci Allarme</button>
-        </section>
+            <section class="controls">
+                <h2>⚙️ Controls</h2>
+                <div>
+                    <button id="autoModeBtn">Set Automatic 🤖</button>
+                    <button id="manualModeBtn">Set Manual 🖐️</button>
+                </div>
+                <div id="manualControlArea" class="hidden">
+                    <h3>Manual Window Control</h3>
+                    <label for="manualSlider">Window opening: <span id="manualSliderValue">0</span>%</label>
+                    <input type="range" id="manualSlider" min="0" max="100" value="0" />
+                </div>
+                <div id="alarmArea" class="hidden">
+                    <h3>🚨 ALARM ACTIVE 🚨</h3>
+                    <button id="ackAlarmBtn" class="alarm-btn">Acknowledge Alarm 🙏</button>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script type="module" src="app.js"></script>
 </body>
-
 </html>

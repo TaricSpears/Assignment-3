@@ -22,19 +22,27 @@ class Pattern {
     virtual boolean match(const Msg& m) = 0;
 };
 
-class RestorePattern : public Pattern {
+class SetmodePattern : public Pattern {
    public:
     boolean match(const Msg& m) {
-        return m.getContent().startsWith("RESTORE");
+        return m.getContent().startsWith("SETMODE:");
     }
 };
 
-class CleanPattern : public Pattern {
+class SetopeningPattern : public Pattern {
    public:
     boolean match(const Msg& m) {
-        return m.getContent().startsWith("CLEAN");
+        return m.getContent().startsWith("SETOPENING:");
     }
 };
+
+class TemperaturePattern : public Pattern {
+   public:
+    boolean match(const Msg& m) {
+        return m.getContent().startsWith("TEMPERATURE:");
+    }
+};
+
 class MsgServiceClass {
    public:
     Msg* currentMsg;

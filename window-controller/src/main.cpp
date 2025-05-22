@@ -87,6 +87,7 @@ void loop() {
         int angle = (int)(potValue * 90);
         servoMotor->setPosition(angle);
         opening = potValue * 100;
+        MsgService.sendMsg("SETOPENING:" + String(opening));
     }
 
     if (mode == Manual) {

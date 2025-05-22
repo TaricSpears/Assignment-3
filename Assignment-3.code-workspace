@@ -10,7 +10,7 @@
     },
     {
       "name": "WindowController (PlatformIO)",
-      "path": "./Window Controller Subsystem"
+      "path": "./window-controller"
     },
     {
       "name": "Dashboard",

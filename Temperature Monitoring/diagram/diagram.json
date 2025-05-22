@@ -3,245 +3,43 @@
     "author": "Pietro Sbaraccani",
     "editor": "wokwi",
     "parts": [
-        {
-            "type": "wokwi-breadboard-half",
-            "id": "bb2",
-            "top": -41.4,
-            "left": 60.4,
-            "attrs": {}
-        },
-        {
-            "type": "board-esp32-devkit-c-v4",
-            "id": "esp",
-            "top": -48,
-            "left": -62.36,
-            "attrs": {}
-        },
-        {
-            "type": "wokwi-ntc-temperature-sensor",
-            "id": "ntc1",
-            "top": -151,
-            "left": 28.2,
-            "attrs": {}
-        },
-        {
-            "type": "wokwi-led",
-            "id": "led1",
-            "top": 54,
-            "left": 99.8,
-            "attrs": {
-                "color": "green"
-            }
-        },
-        {
-            "type": "wokwi-led",
-            "id": "led2",
-            "top": 54,
-            "left": 138.2,
-            "attrs": {
-                "color": "red"
-            }
-        },
-        {
-            "type": "wokwi-pushbutton-6mm",
-            "id": "btn1",
-            "top": 49,
-            "left": 205.6,
-            "rotate": 90,
-            "attrs": {
-                "color": "green",
-                "xray": "1"
-            }
-        }
+      { "type": "wokwi-breadboard-half", "id": "bb2", "top": -41.4, "left": 60.4, "attrs": {} },
+      { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": -48, "left": -62.36, "attrs": {} },
+      { "type": "wokwi-led", "id": "led1", "top": 54, "left": 99.8, "attrs": { "color": "green" } },
+      { "type": "wokwi-led", "id": "led2", "top": 54, "left": 138.2, "attrs": { "color": "red" } },
+      {
+        "type": "wokwi-pushbutton-6mm",
+        "id": "btn1",
+        "top": 49,
+        "left": 205.6,
+        "rotate": 90,
+        "attrs": { "color": "green", "xray": "1" }
+      },
+      { "type": "board-ds18b20", "id": "temp1", "top": -212.33, "left": 138.48, "attrs": {} }
     ],
     "connections": [
-        [
-            "esp:TX",
-            "$serialMonitor:RX",
-            "",
-            []
-        ],
-        [
-            "esp:RX",
-            "$serialMonitor:TX",
-            "",
-            []
-        ],
-        [
-            "ntc1:OUT",
-            "esp:32",
-            "green",
-            [
-                "h9.6",
-                "v28.7",
-                "h-163.2",
-                "v-9.6",
-                "h-96",
-                "v96"
-            ]
-        ],
-        [
-            "ntc1:GND",
-            "bb2:tn.25",
-            "black",
-            [
-                "h0"
-            ]
-        ],
-        [
-            "ntc1:VCC",
-            "bb2:tp.25",
-            "red",
-            [
-                "h0"
-            ]
-        ],
-        [
-            "esp:5V",
-            "bb2:tp.1",
-            "red",
-            [
-                "h-19.05",
-                "v-211.2",
-                "h163.2"
-            ]
-        ],
-        [
-            "esp:GND.1",
-            "bb2:tn.1",
-            "black",
-            [
-                "h-9.45",
-                "v-153.6",
-                "h115.2",
-                "v19.2"
-            ]
-        ],
-        [
-            "esp:27",
-            "bb2:5b.i",
-            "limegreen",
-            [
-                "h115.35",
-                "v48",
-                "h67.2"
-            ]
-        ],
-        [
-            "esp:14",
-            "bb2:9b.i",
-            "orange",
-            [
-                "h124.95",
-                "v48",
-                "h96"
-            ]
-        ],
-        [
-            "bb2:4b.i",
-            "bb2:bn.3",
-            "black",
-            [
-                "v0"
-            ]
-        ],
-        [
-            "bb2:8b.i",
-            "bb2:bn.6",
-            "black",
-            [
-                "v0"
-            ]
-        ],
-        [
-            "bb2:bn.1",
-            "bb2:tn.2",
-            "green",
-            [
-                "v0"
-            ]
-        ],
-        [
-            "esp:26",
-            "bb2:16t.d",
-            "violet",
-            [
-                "h115.35",
-                "v-38.4"
-            ]
-        ],
-        [
-            "led2:A",
-            "bb2:9b.h",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "led2:C",
-            "bb2:8b.h",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "led1:A",
-            "bb2:5b.h",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "led1:C",
-            "bb2:4b.h",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "btn1:1.l",
-            "bb2:16t.e",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "btn1:2.l",
-            "bb2:14t.e",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "btn1:1.r",
-            "bb2:16b.f",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "btn1:2.r",
-            "bb2:14b.f",
-            "",
-            [
-                "$bb"
-            ]
-        ],
-        [
-            "bb2:14b.g",
-            "bb2:bn.11",
-            "black",
-            [
-                "v0"
-            ]
-        ]
+      [ "esp:TX", "$serialMonitor:RX", "", [] ],
+      [ "esp:RX", "$serialMonitor:TX", "", [] ],
+      [ "esp:5V", "bb2:tp.1", "red", [ "h-19.05", "v-211.2", "h163.2" ] ],
+      [ "esp:GND.1", "bb2:tn.1", "black", [ "h-9.45", "v-153.6", "h115.2", "v19.2" ] ],
+      [ "esp:27", "bb2:5b.i", "limegreen", [ "h115.35", "v48", "h67.2" ] ],
+      [ "esp:14", "bb2:9b.i", "orange", [ "h124.95", "v48", "h96" ] ],
+      [ "bb2:4b.i", "bb2:bn.3", "black", [ "v0" ] ],
+      [ "bb2:8b.i", "bb2:bn.6", "black", [ "v0" ] ],
+      [ "bb2:bn.1", "bb2:tn.2", "green", [ "v0" ] ],
+      [ "esp:26", "bb2:16t.d", "violet", [ "h115.35", "v-38.4" ] ],
+      [ "led2:A", "bb2:9b.h", "", [ "$bb" ] ],
+      [ "led2:C", "bb2:8b.h", "", [ "$bb" ] ],
+      [ "led1:A", "bb2:5b.h", "", [ "$bb" ] ],
+      [ "led1:C", "bb2:4b.h", "", [ "$bb" ] ],
+      [ "btn1:1.l", "bb2:16t.e", "", [ "$bb" ] ],
+      [ "btn1:2.l", "bb2:14t.e", "", [ "$bb" ] ],
+      [ "btn1:1.r", "bb2:16b.f", "", [ "$bb" ] ],
+      [ "btn1:2.r", "bb2:14b.f", "", [ "$bb" ] ],
+      [ "bb2:14b.g", "bb2:bn.11", "black", [ "v0" ] ],
+      [ "temp1:VCC", "bb2:tp.7", "red", [ "v0" ] ],
+      [ "temp1:DQ", "esp:32", "green", [ "v67.2", "h-259.2", "v48" ] ],
+      [ "temp1:GND", "bb2:tn.5", "black", [ "v124.8", "h-9.6" ] ]
     ],
     "dependencies": {}
-}
+  }

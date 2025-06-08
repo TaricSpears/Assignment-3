@@ -16,10 +16,10 @@ const char *mqtt_pass = "pippo";             // se usi auth
 const char *pub_topic = "esp32/temperature"; // topic di pubblicazione
 
 // Pin definitions
-#define BUTTON_PIN 26
+#define BUTTON_PIN 40
 #define GREEN_LED 27
-#define RED_LED 14
-#define TEMP_SENSOR_PIN 32
+#define RED_LED 47
+#define TEMP_SENSOR_PIN 48
 
 #endif // CONFIG_H
 

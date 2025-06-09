@@ -2,7 +2,13 @@
 #ifndef SENSOR_MANAGER_H
 #define SENSOR_MANAGER_H
 
+// Inizializza il sensore
 void sensorInit();
+
+// Leggi la temperatura (singola lettura)
 float readTemperature();
 
-#endif // SENSOR_MANAGER_H
+// Leggi la temperatura con smoothing (lettura mediata)
+float readTemperatureSmoothed();
+
+#endif

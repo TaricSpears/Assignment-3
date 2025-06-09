@@ -1,14 +1,15 @@
 // File: main.cpp
-#include "include/config.h"
-#include "include/mqtt_manager.h"
-#include "include/sensor_manager.h"
-#include "include/state_machine.h"
+#include "config.h"
+#include "mqtt_manager.h"
+#include "sensor_manager.h"
+#include "state_machine.h"
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 void setup()
 {
   Serial.begin(115200);
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
     delay(500);
 
@@ -34,6 +35,6 @@ void loop()
   char buf[128];
   size_t n = serializeJson(doc, buf);
 
-  mqttPublish(MQTT_TOPIC, buf, n);
+  mqttPublish(PUB_TOPIC, buf, n);
   delay(5000);
 }

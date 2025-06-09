@@ -1,6 +1,6 @@
 // File: mqtt_manager.cpp
-#include "include/config.h"
-#include "include/mqtt_manager.h"
+#include "config.h"
+#include "mqtt_manager.h"
 #include <ArduinoJson.h>
 
 static WiFiClient *netClient = nullptr;
@@ -10,7 +10,7 @@ void mqttInit(WiFiClient &wifiClient)
 {
     netClient = &wifiClient;
     mqttClient.setClient(wifiClient);
-    mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
+    mqttClient.setServer(MQTT_SERVER, 1883);
 }
 
 static void mqttReconnect()

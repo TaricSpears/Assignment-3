@@ -1,6 +1,6 @@
 // File: state_machine.cpp
-#include "include/state_machine.h"
-#include "include/config.h"
+#include "state_machine.h"
+#include "config.h"
 #include <Arduino.h>
 
 static State currentState;

@@ -1,6 +1,8 @@
 from flask import Blueprint, current_app, jsonify, request, Response
 import json
 import random
+from app import system_state
+from app.state import Mode
 bp = Blueprint("routes", __name__)
 
 
@@ -14,22 +16,35 @@ def get_temperature():
 
 @bp.route('/api/setmode', methods=['POST'])
 def set_mode():
-    body = request.get_json()
-    print(body)
+    print("Setting mode 123 ", request.get_json())
+    mode = request.get_json().get("mode", "AUTOMATIC")
+    if mode == "MANUAL":
+        system_state.set_mode(Mode.MANUAL)
+    elif mode == "AUTOMATIC":
+        system_state.set_mode(Mode.AUTOMATIC)
+    else:
+        return jsonify({"error": "Invalid mode"}), 400
     return Response(status=200)
 
 
+@bp.route('/api/getmode', methods=['GET'])
+def get_mode():
+    print("Getting mode")
+    mode = system_state.get_mode()
+    return json.dumps({
+        "mode": mode.name
+    })
+
 @bp.route('/api/setwindow', methods=['POST'])
 def set_window_opening():
-    body = request.get_json()
-    print(body)
+    system_state.set_window_opening(request.get_json().get("percentage", 0.0))
     return Response(status=200)
 
 
 @bp.route('/api/getwindow', methods=['GET'])
 def get_window_opening():
     return json.dumps({
-        "value": random.randint(0, 100)
+        "value": system_state.get_window_opening()
     })
 
 

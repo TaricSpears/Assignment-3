@@ -1,16 +1,15 @@
 #include "Arduino.h"
 #include "LiquidCrystal_I2C.h"
+#include "Servo.h"
 #include "config.h"
 #include "devices/Button.h"
 #include "devices/ButtonImpl.h"
 #include "devices/Pot.h"
-#include "devices/servo_motor.h"
-#include "devices/servo_motor_impl.h"
 #include "kernel/MsgService.h"
 
 enum Mode { Automatic, Manual } mode;
 
-ServoMotor* servoMotor = new ServoMotorImpl(WINDOW_MOTOR_PIN);
+Servo* servoMotor = new Servo();
 Button* button = new ButtonImpl(BUTTON_PIN);
 Potentiometer* potentiometer = new Potentiometer(POT_PIN);
 LiquidCrystal_I2C* lcd = new LiquidCrystal_I2C(0x27, 20, 4);
@@ -36,10 +35,11 @@ void displayMessage(const char* line1, const char* line2) {
 
 void setup() {
     mode = Automatic;
-    servoMotor->on();
-    servoMotor->setPosition(0);
+    servoMotor->attach(WINDOW_MOTOR_PIN);
+    servoMotor->write(0);
     lcd->init();
     lcd->backlight();
+    MsgService.init();
 }
 
 void loop() {
@@ -57,9 +57,18 @@ void loop() {
         }
     }
 
+    int cnt = 0;
     while (MsgService.isMsgAvailable()) {
-        Msg* msg = MsgService.receiveMsg(*setmodePattern);
+        Msg* msg = MsgService.receiveMsg();
+        if (msg == NULL) {
+            continue;
+        }
         String content = msg->getContent();
+        cnt++;
+        // displayMessage(("received; " + String(cnt) + " messages").c_str());
+        // displayMessage(("Received: " + content).c_str());
+        // delay(20);
+        // Serial.println("Received message: " + content);
         if (setmodePattern->match(*msg)) {
             if (content == "SETMODE:MANUAL") {
                 mode = Manual;
@@ -71,7 +80,7 @@ void loop() {
                 String openingStr = content.substring(11);
                 opening = openingStr.toFloat();
                 int angle = (int)(opening * 90);
-                servoMotor->setPosition(angle);
+                servoMotor->write(angle);
             }
         } else if (temperaturePattern->match(*msg)) {
             if (content.startsWith("TEMPERATURE:")) {
@@ -79,13 +88,15 @@ void loop() {
                 temperature = temperatureStr.toFloat();
             }
         }
+        delete msg;
     }
+    // displayMessage(("received; " + String(cnt) + " messages").c_str());
 
     if (mode == Manual) {
         potentiometer->sync();
         float potValue = potentiometer->getValue();
         int angle = (int)(potValue * 90);
-        servoMotor->setPosition(angle);
+        servoMotor->write(angle);
         opening = potValue * 100;
         MsgService.sendMsg("SETOPENING:" + String(opening));
     }

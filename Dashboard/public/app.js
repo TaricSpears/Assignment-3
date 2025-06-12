@@ -1,5 +1,5 @@
 import { createTemperatureChart } from './chart.js';
-import { fetchTemperatureData, setMode, setWindowOpening, acknowledgeAlarm, getSystemState, getWindowOpening } from './api/client.js'; // Assuming client.js is in 'api' folder
+import { fetchTemperatureData, setMode, getMode, setWindowOpening, acknowledgeAlarm, getSystemState, getWindowOpening } from './api/client.js'; // Assuming client.js is in 'api' folder
 
 const ctx = document.getElementById('temperatureChart').getContext('2d');
 const chart = createTemperatureChart(ctx);
@@ -26,13 +26,14 @@ function updateUI() {
     systemStateDisplayEl.textContent = currentState.state;
     windowOpeningDisplayEl.textContent = currentState.windowOpening;
 
+    console.log(`Current Mode: ${currentSystemMode}`);
     if (currentSystemMode === 'AUTOMATIC') {
-        autoModeBtn.classList.add('active');
-        manualModeBtn.classList.remove('active');
+        manualModeBtn.classList.remove('hidden');
+        autoModeBtn.classList.add('hidden');
         manualControlAreaEl.classList.add('hidden');
     } else if (currentSystemMode === 'MANUAL') {
-        manualModeBtn.classList.add('active');
-        autoModeBtn.classList.remove('active');
+        autoModeBtn.classList.remove('hidden');
+        manualModeBtn.classList.add('hidden');
         manualControlAreaEl.classList.remove('hidden');
         manualSliderEl.value = currentState.windowOpening;
         manualSliderValueEl.textContent = currentState.windowOpening;
@@ -49,11 +50,13 @@ async function refreshData() {
         const temperature_data = await fetchTemperatureData();
         const window_opening = await getWindowOpening();
         const system_state = await getSystemState();
+        const mode = await getMode();
         if (temperature_data && temperature_data.length > 0) {
             chart.data.labels = temperature_data.map(e => new Date(e.timestamp).toLocaleTimeString());
             chart.data.datasets[0].data = temperature_data.map(e => e.temperature);
             chart.update();
         }
+        currentSystemMode = mode;
         currentState.temperature = temperature_data[temperature_data.length - 1].temperature;
         currentState.windowOpening = window_opening;
         currentState.state = system_state;
@@ -118,7 +121,7 @@ ackAlarmBtn.addEventListener('click', async () => {
 
 async function initializeApp() {
     await refreshData();
-    setInterval(refreshData, 3000);
+    setInterval(refreshData, 2000);
 }
 
 initializeApp();

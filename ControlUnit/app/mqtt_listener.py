@@ -5,10 +5,10 @@ from app import system_state
 from state import Mode
 
 # === CONFIGURAZIONE MQTT ===
-MQTT_SERVER = "mqtt.eclipse.org"  # IP locale del broker MQTT
+MQTT_SERVER = "test.mosquitto.org"  # IP locale del broker MQTT
 MQTT_PORT = 1883
-MQTT_USER = "pippo"         # opzionale, se usi auth
-MQTT_PASS = "pippo"     # opzionale, se usi auth
+MQTT_USER = ""         # opzionale, se usi auth
+MQTT_PASS = ""     # opzionale, se usi auth
 
 # === TOPIC MQTT DA ASCOLTARE ===
 MQTT_TOPICS = [("esp32/temperature", 0)]

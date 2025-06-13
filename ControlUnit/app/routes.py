@@ -8,10 +8,11 @@ bp = Blueprint("routes", __name__)
 
 @bp.route('/api/temperature', methods=['GET'])
 def get_temperature():
+    temperatures = system_state.get_measurements()
     return json.dumps([{
-        "temperature": random.randint(0, 100),
-        "timestamp": t
-    } for t in range(10)])
+        "temperature": t.temperature,
+        "timestamp": t.timestamp
+    }for t in temperatures])
 
 
 @bp.route('/api/setmode', methods=['POST'])
@@ -35,6 +36,7 @@ def get_mode():
         "mode": mode.name
     })
 
+
 @bp.route('/api/setwindow', methods=['POST'])
 def set_window_opening():
     system_state.set_window_opening(request.get_json().get("percentage", 0.0))
@@ -51,12 +53,7 @@ def get_window_opening():
 @bp.route('/api/getstate', methods=['GET'])
 def get_state():
     return json.dumps({
-        "value": random.choice([
-            "NORMAL",
-            "HOT",
-            "TOO_HOT",
-            "ALARM"
-        ])
+        "value": system_state.get_state().name
     })
 
 

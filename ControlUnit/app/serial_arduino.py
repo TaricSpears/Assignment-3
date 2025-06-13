@@ -23,13 +23,13 @@ def serial_loop():
             try:
                 line = ser.readline().decode('utf-8', errors='replace').strip()
                 if line:
-                    print(f"Received: x{line}x", system_state.get_mode().name)
+                    print(f"Received: x{line}x")
                     if line == "SETMODE:MANUAL":
                         print("Setting mode123 to MANUAL")
-                        system_state.set_mode(Mode.MANUAL)
+                        system_state.set_mode_arduino(Mode.MANUAL)
                     elif line == "SETMODE:AUTOMATIC":
                         print("Setting mode123 to AUTOMATIC")
-                        system_state.set_mode(Mode.AUTOMATIC)
+                        system_state.set_mode_arduino(Mode.AUTOMATIC)
                     elif line.startswith("SETOPENING:"):
                         value = float(line.split(":")[1])
                         system_state.set_window_opening(value)

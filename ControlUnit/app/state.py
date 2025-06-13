@@ -34,7 +34,8 @@ class SystemState:
         self.state = State.NORMAL
         self.measurements = []
         self.window_opening = 0.0
-        self.mode = Mode.AUTOMATIC
+        self.mode_arduino = Mode.AUTOMATIC
+        self.mode_dashboard = Mode.AUTOMATIC
         self.too_hot_start_time = None
 
     def add_measurement(self, temperature: float, timestamp: int):
@@ -59,23 +60,22 @@ class SystemState:
                 raise ValueError("Window opening must be between 0 and 100")
             self.window_opening = value
 
-    def set_mode(self, mode: Mode):
+    def set_mode_arduino(self, mode: Mode):
         with self.lock:
-            print(f"Setting mode 111 to {mode.name}")
-            self.mode = mode
+            self.mode_arduino = mode
+
+    def set_mode_dashboard(self, mode: Mode):
+        with self.lock:
+            self.mode_dashboard = mode
 
     def set_state(self, state: State):
         with self.lock:
             self.state = state
 
-    def get_mode(self):
-        with self.lock:
-            return self.mode
-
     def get_window_opening(self):
         with self.lock:
             temperature = self.measurements[-1].temperature if self.measurements else 0.0
-            if self.mode == Mode.AUTOMATIC:  # and dashboard is in automatic mode
+            if self.mode_arduino == Mode.AUTOMATIC and self.mode_dashboard == Mode.AUTOMATIC:
                 if self.state == State.TOOHOT or self.state == State.ALARM:
                     self.window_opening = 100.0
                 elif self.state == State.HOT:

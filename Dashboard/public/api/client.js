@@ -29,6 +29,17 @@ export async function getWindowOpening() {
     return data.value;
 }
 
+export async function setMode(mode) {
+    const res = await fetch(`${API_BASE_URL}/setmode`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode })
+    });
+    if (!res.ok) {
+        throw new Error(`HTTP error setting mode! status: ${res.status}`);
+    }
+}
+
 export async function getSystemState() {
     const res = await fetch(`${API_BASE_URL}/getstate`);
     if (!res.ok) {

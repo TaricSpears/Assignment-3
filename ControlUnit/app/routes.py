@@ -35,6 +35,18 @@ def get_state():
     })
 
 
+@bp.route('/api/setmode', methods=['POST'])
+def set_mode():
+    mode_str = request.get_json().get("mode", "AUTOMATIC")
+    if mode_str == "MANUAL":
+        system_state.set_mode_dashboard(Mode.MANUAL)
+    elif mode_str == "AUTOMATIC":
+        system_state.set_mode_dashboard(Mode.AUTOMATIC)
+    else:
+        return jsonify({"error": "Invalid mode"}), 400
+    return Response(status=200)
+
+
 @bp.route('/api/alarm', methods=['POST'])
 def alarm():
     return Response(status=200)

@@ -79,7 +79,7 @@ void loop() {
             if (content.startsWith("SETOPENING:")) {
                 String openingStr = content.substring(11);
                 opening = openingStr.toFloat();
-                int angle = (int)(opening * 90);
+                int angle = (int)(opening / 100.0 * 90);
                 servoMotor->write(angle);
             }
         } else if (temperaturePattern->match(*msg)) {

@@ -33,9 +33,8 @@ def on_message(client, userdata, msg):
 
     try:
         if msg.topic == "esp32/temperature":
-            message = json.loads(msg.payload.decode())
-            data = json.loads(message.get("data", {}))
-            timestamp = message.get("timestamp")
+            data = json.loads(msg.payload.decode())
+            timestamp = data["timestamp"]
             temp = float(data["temperature"])
             state_str = data["state"]
             # Aggiungi la temperatura allo stato

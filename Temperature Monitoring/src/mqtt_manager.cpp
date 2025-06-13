@@ -1,3 +1,4 @@
+
 // File: mqtt_manager.cpp
 #include "config.h"
 #include "mqtt_manager.h"
@@ -6,15 +7,18 @@
 
 static WiFiClient *netClient = nullptr;
 static PubSubClient mqttClient(*netClient);
+static unsigned long lastReconnectAttempt = 0;
 
 void mqttInit(WiFiClient &wifiClient)
 {
     netClient = &wifiClient;
     mqttClient.setClient(wifiClient);
-    mqttClient.setServer(MQTT_SERVER, 1883);
+    mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
 
-    // Configura NTP per ottenere il timestamp
+    // Configura NTP per timestamp
     configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+
+    Serial.println("MQTT Manager inizializzato");
 }
 
 void mqttSetCallback(void (*callback)(char *, uint8_t *, unsigned int))
@@ -22,38 +26,63 @@ void mqttSetCallback(void (*callback)(char *, uint8_t *, unsigned int))
     mqttClient.setCallback(callback);
 }
 
-void mqttSubscribe(const char *topic)
+bool mqttConnect()
 {
-    if (mqttClient.connected())
+    if (WiFi.status() != WL_CONNECTED)
     {
-        mqttClient.subscribe(topic);
-        Serial.print("Sottoscritto al topic: ");
-        Serial.println(topic);
+        return false;
+    }
+
+    Serial.print("Tentativo connessione MQTT...");
+
+    // Genera client ID unico
+    String clientId = "ESP32Client-";
+    clientId += String(random(0xffff), HEX);
+
+    if (mqttClient.connect(clientId.c_str(), MQTT_USER, MQTT_PASS))
+    {
+        Serial.println(" connesso!");
+
+        // Subscribe ai topic necessari
+        mqttClient.subscribe("esp32/state");
+        Serial.println("Sottoscritto a: esp32/state");
+
+        return true;
+    }
+    else
+    {
+        Serial.print(" fallito, rc=");
+        Serial.println(mqttClient.state());
+        return false;
     }
 }
 
-static void mqttReconnect()
+bool mqttIsConnected()
 {
-    while (!mqttClient.connected())
+    return mqttClient.connected();
+}
+
+void mqttLoop()
+{
+    if (!mqttClient.connected())
     {
-        Serial.print("Tentativo connessione MQTT...");
-        if (mqttClient.connect("ESP32Client", MQTT_USER, MQTT_PASS))
+        unsigned long now = millis();
+        // Riconnetti ogni 5 secondi
+        if (now - lastReconnectAttempt > 5000)
         {
-            Serial.println(" connesso!");
-            // Risubscribe ai topic dopo la riconnessione
-            mqttSubscribe(SUB_TOPIC);
+            lastReconnectAttempt = now;
+            if (mqttConnect())
+            {
+                lastReconnectAttempt = 0;
+            }
         }
-        else
-        {
-            Serial.print(" fallito, rc=");
-            Serial.print(mqttClient.state());
-            Serial.println(" riprovo tra 5 secondi");
-            delay(5000);
-        }
+    }
+    else
+    {
+        mqttClient.loop();
     }
 }
 
-// Funzione per ottenere timestamp in formato epoch
 unsigned long getTimestamp()
 {
     time_t now;
@@ -61,7 +90,6 @@ unsigned long getTimestamp()
     return now;
 }
 
-// Funzione per ottenere timestamp in formato ISO 8601
 String getISOTimestamp()
 {
     time_t now;
@@ -74,34 +102,35 @@ String getISOTimestamp()
     return String(buffer);
 }
 
-// Versione originale senza timestamp
 bool mqttPublish(const char *topic, const char *payload, size_t length)
 {
     if (!mqttClient.connected())
-        mqttReconnect();
-    mqttClient.loop();
+    {
+        return false;
+    }
+
     return mqttClient.publish(topic, payload, length);
 }
 
-// Nuova versione con timestamp automatico (formato JSON)
 bool mqttPublishWithTimestamp(const char *topic, const char *payload, size_t length)
 {
     if (!mqttClient.connected())
-        mqttReconnect();
-    mqttClient.loop();
+    {
+        return false;
+    }
 
-    // Crea un JSON con timestamp e payload originale
+    // Crea JSON con timestamp e dati originali
     StaticJsonDocument<512> doc;
     doc["timestamp"] = getTimestamp();
     doc["iso_timestamp"] = getISOTimestamp();
 
-    // Parse del payload originale se è JSON
+    // Parse payload originale se è JSON
     StaticJsonDocument<256> originalDoc;
     DeserializationError error = deserializeJson(originalDoc, payload);
 
     if (!error)
     {
-        // Se è un JSON valido, copia i campi
+        // Copia tutti i campi dal JSON originale
         for (JsonPair kv : originalDoc.as<JsonObject>())
         {
             doc[kv.key()] = kv.value();
@@ -109,7 +138,7 @@ bool mqttPublishWithTimestamp(const char *topic, const char *payload, size_t len
     }
     else
     {
-        // Altrimenti mettilo come stringa
+        // Se non è JSON, metti come stringa
         doc["data"] = payload;
     }
 
@@ -117,46 +146,4 @@ bool mqttPublishWithTimestamp(const char *topic, const char *payload, size_t len
     serializeJson(doc, jsonString);
 
     return mqttClient.publish(topic, jsonString.c_str());
-}
-
-// Versione alternativa: aggiunge timestamp come prefisso
-bool mqttPublishWithTimestampPrefix(const char *topic, const char *payload, size_t length)
-{
-    if (!mqttClient.connected())
-        mqttReconnect();
-    mqttClient.loop();
-
-    String timestampedPayload = String(getTimestamp()) + "|" + String(payload);
-    return mqttClient.publish(topic, timestampedPayload.c_str());
-}
-
-// Versione per payload JSON esistente - aggiunge timestamp al JSON
-bool mqttPublishJsonWithTimestamp(const char *topic, const char *jsonPayload, size_t length)
-{
-    if (!mqttClient.connected())
-        mqttReconnect();
-    mqttClient.loop();
-
-    StaticJsonDocument<512> doc;
-    DeserializationError error = deserializeJson(doc, jsonPayload);
-
-    if (error)
-    {
-        return mqttPublishWithTimestampPrefix(topic, jsonPayload, length);
-    }
-
-    doc["timestamp"] = getTimestamp();
-    doc["iso_timestamp"] = getISOTimestamp();
-
-    String jsonString;
-    serializeJson(doc, jsonString);
-
-    return mqttClient.publish(topic, jsonString.c_str());
-}
-
-void mqttLoop()
-{
-    if (!mqttClient.connected())
-        mqttReconnect();
-    mqttClient.loop();
 }

@@ -12,6 +12,4 @@ def create_app():
     from app.routes import bp as routes_bp
     app.register_blueprint(routes_bp)
 
-    app.system_state = system_state
-
     return app

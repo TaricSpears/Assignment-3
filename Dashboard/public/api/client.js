@@ -20,6 +20,17 @@ export async function setMode(mode) {
     }
 }
 
+export async function getMode() {
+    const res = await fetch(`${API_BASE_URL}/getmode`);
+    if (!res.ok) {
+        throw new Error(`HTTP error getting mode! status: ${res.status}`);
+    }
+    const data = await res.json();
+    return data['mode'];
+    console.log("mode: ", data)
+    return data.value;
+}
+
 export async function setWindowOpening(percentage) {
     const res = await fetch(`${API_BASE_URL}/setwindow`, {
         method: 'POST',

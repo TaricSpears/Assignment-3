@@ -25,6 +25,7 @@ class TemperatureMeasurement:
 
 class SystemState:
     def __init__(self):
+        print("initializing state")
         self.lock = threading.Lock()
         self.state = State.NORMAL
         self.measurements = []
@@ -39,12 +40,13 @@ class SystemState:
 
     def set_window_opening(self, value: float):
         with self.lock:
-            if value < 0.0 or value > 1.0:
-                raise ValueError("Window opening must be between 0 and 1")
+            if value < 0.0 or value > 100.0:
+                raise ValueError("Window opening must be between 0 and 100")
             self.window_opening = value
 
     def set_mode(self, mode: Mode):
         with self.lock:
+            print(f"Setting mode 111 to {mode.name}")
             self.mode = mode
 
     def set_state(self, state: State):
@@ -61,7 +63,7 @@ class SystemState:
 
     def get_measurements(self):
         with self.lock:
-            return self.measurements
+            return list(self.measurements)
 
     def get_state(self):
         with self.lock:

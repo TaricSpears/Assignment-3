@@ -7,6 +7,9 @@ const chart = createTemperatureChart(ctx);
 const currentModeDisplayEl = document.getElementById('currentModeDisplay');
 const systemStateDisplayEl = document.getElementById('systemStateDisplay');
 const windowOpeningDisplayEl = document.getElementById('windowOpeningDisplay');
+const avgTempDisplayEl = document.getElementById('avgTempDisplay');
+const minTempDisplayEl = document.getElementById('minTempDisplay');
+const maxTempDisplayEl = document.getElementById('maxTempDisplay');
 
 const autoModeBtn = document.getElementById('autoModeBtn');
 const manualModeBtn = document.getElementById('manualModeBtn');
@@ -21,10 +24,40 @@ const ackAlarmBtn = document.getElementById('ackAlarmBtn');
 let currentSystemMode = 'AUTOMATIC';
 let currentState = { temperature: null, state: 'UNKNOWN', windowOpening: 0 };
 
+function calculateTemperatureStats(temperatureData) {
+    if (!temperatureData || temperatureData.length === 0) {
+        return {
+            avg: '--',
+            min: '--',
+            max: '--'
+        };
+    }
+
+    const temperatures = temperatureData.map(e => e.temperature);
+    const avg = temperatures.reduce((a, b) => a + b, 0) / temperatures.length;
+    const min = Math.min(...temperatures);
+    const max = Math.max(...temperatures);
+
+    return {
+        avg: avg.toFixed(1),
+        min: min.toFixed(1),
+        max: max.toFixed(1)
+    };
+}
+
 function updateUI() {
     currentModeDisplayEl.textContent = currentSystemMode.charAt(0).toUpperCase() + currentSystemMode.slice(1).toLowerCase();
     systemStateDisplayEl.textContent = currentState.state;
     windowOpeningDisplayEl.textContent = currentState.windowOpening;
+
+    // Update temperature statistics
+    const stats = calculateTemperatureStats(chart.data.datasets[0].data.map((temp, index) => ({
+        temperature: temp,
+        timestamp: chart.data.labels[index]
+    })));
+    avgTempDisplayEl.textContent = stats.avg;
+    minTempDisplayEl.textContent = stats.min;
+    maxTempDisplayEl.textContent = stats.max;
 
     console.log(`Current Mode: ${currentSystemMode}`);
     if (currentSystemMode === 'AUTOMATIC') {

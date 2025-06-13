@@ -2,6 +2,7 @@ from enum import Enum
 import threading
 import time
 
+
 class State(Enum):
     NORMAL = 0
     HOT = 1
@@ -16,7 +17,7 @@ class Mode(Enum):
 
 N_temp_measurements = 10
 T1 = 20
-T2 = 32
+T2 = 22
 DT = 3
 
 
@@ -43,15 +44,17 @@ class SystemState:
                 self.measurements.pop(0)
             self.measurements.append(TemperatureMeasurement(temperature, timestamp))
 
-            if temperature >= T2:
-                if self.state != State.TOOHOT:
-                    self.state = State.TOOHOT
-                    self.too_hot_start_time = timestamp
-                    print("State changed to TOOHOT")
-            elif temperature >= T1:
-                self.state = State.HOT
-            else:
-                self.state = State.NORMAL
+            if self.state != State.ALARM:
+                # update state based on the latest temperature
+                if temperature >= T2:
+                    if self.state != State.TOOHOT:
+                        self.state = State.TOOHOT
+                        self.too_hot_start_time = timestamp
+                        print("State changed to TOOHOT")
+                elif temperature >= T1:
+                    self.state = State.HOT
+                else:
+                    self.state = State.NORMAL
 
     def set_window_opening(self, value: float):
         with self.lock:

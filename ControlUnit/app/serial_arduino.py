@@ -41,8 +41,6 @@ def serial_loop():
 
         send_command_to_arduino(ser, f"SETOPENING:{system_state.get_window_opening()}")
         time.sleep(0.3)
-        send_command_to_arduino(ser, f"SETMODE:{system_state.get_mode().name}")
-        time.sleep(0.3)
         temps = system_state.get_measurements()
         send_command_to_arduino(ser, f"TEMPERATURE:{temps[-1].temperature if temps else 0}")
         time.sleep(0.3)

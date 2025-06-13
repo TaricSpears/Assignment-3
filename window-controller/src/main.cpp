@@ -13,7 +13,7 @@ Servo* servoMotor = new Servo();
 Button* button = new ButtonImpl(BUTTON_PIN);
 Potentiometer* potentiometer = new Potentiometer(POT_PIN);
 LiquidCrystal_I2C* lcd = new LiquidCrystal_I2C(0x27, 20, 4);
-float opening = 0;
+float opening = 0;  // percentage
 float temperature = 0;
 SetmodePattern* setmodePattern = new SetmodePattern();
 SetopeningPattern* setopeningPattern = new SetopeningPattern();
@@ -57,18 +57,12 @@ void loop() {
         }
     }
 
-    int cnt = 0;
     while (MsgService.isMsgAvailable()) {
         Msg* msg = MsgService.receiveMsg();
         if (msg == NULL) {
             continue;
         }
         String content = msg->getContent();
-        cnt++;
-        // displayMessage(("received; " + String(cnt) + " messages").c_str());
-        // displayMessage(("Received: " + content).c_str());
-        // delay(20);
-        // Serial.println("Received message: " + content);
         if (setmodePattern->match(*msg)) {
             if (content == "SETMODE:MANUAL") {
                 mode = Manual;

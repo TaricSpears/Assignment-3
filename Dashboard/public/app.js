@@ -51,7 +51,7 @@ async function refreshData() {
         const window_opening = await getWindowOpening();
         const system_state = await getSystemState();
         if (temperature_data && temperature_data.length > 0) {
-            chart.data.labels = temperature_data.map(e => new Date(e.timestamp).toLocaleTimeString());
+            chart.data.labels = temperature_data.map(e => new Date(e.timestamp * 1000).toLocaleTimeString());
             chart.data.datasets[0].data = temperature_data.map(e => e.temperature);
             chart.update();
         }
@@ -117,7 +117,7 @@ ackAlarmBtn.addEventListener('click', async () => {
 
 async function initializeApp() {
     await refreshData();
-    setInterval(refreshData, 2000);
+    setInterval(refreshData, 500);
 }
 
 initializeApp();

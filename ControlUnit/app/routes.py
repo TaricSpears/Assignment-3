@@ -37,5 +37,4 @@ def get_state():
 
 @bp.route('/api/alarm', methods=['POST'])
 def alarm():
-    
     return Response(status=200)

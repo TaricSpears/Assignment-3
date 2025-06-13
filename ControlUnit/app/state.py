@@ -1,5 +1,6 @@
 from enum import Enum
 import threading
+import time
 
 
 class State(Enum):
@@ -15,6 +16,9 @@ class Mode(Enum):
 
 
 N_temp_measurements = 10
+T1 = 20
+T2 = 32
+DT = 3
 
 
 class TemperatureMeasurement:
@@ -31,12 +35,23 @@ class SystemState:
         self.measurements = []
         self.window_opening = 0.0
         self.mode = Mode.AUTOMATIC
+        self.too_hot_start_time = None
 
     def add_measurement(self, temperature: float, timestamp: int):
         with self.lock:
             if len(self.measurements) >= N_temp_measurements:
                 self.measurements.pop(0)
             self.measurements.append(TemperatureMeasurement(temperature, timestamp))
+
+            if temperature >= T2:
+                if self.state != State.TOOHOT:
+                    self.state = State.TOOHOT
+                    self.too_hot_start_time = timestamp
+                    print("State changed to TOOHOT")
+            elif temperature >= T1:
+                self.state = State.HOT
+            else:
+                self.state = State.NORMAL
 
     def set_window_opening(self, value: float):
         with self.lock:
@@ -59,6 +74,14 @@ class SystemState:
 
     def get_window_opening(self):
         with self.lock:
+            temperature = self.measurements[-1].temperature if self.measurements else 0.0
+            if self.mode == Mode.AUTOMATIC:  # and dashboard is in automatic mode
+                if self.state == State.TOOHOT or self.state == State.ALARM:
+                    self.window_opening = 100.0
+                elif self.state == State.HOT:
+                    self.window_opening = (temperature - T1) / (T2 - T1) * 100.0
+                else:
+                    self.window_opening = 0.0
             return self.window_opening
 
     def get_measurements(self):
@@ -67,4 +90,8 @@ class SystemState:
 
     def get_state(self):
         with self.lock:
+            # Check if too hot for too long
+            if self.state == State.TOOHOT and (time.time() - self.too_hot_start_time) > DT:
+                self.state = State.ALARM
+                print("State changed to ALARM due to prolonged high temperature")
             return self.state

@@ -28,10 +28,8 @@ def on_message(client, userdata, msg):
             data = json.loads(msg.payload.decode())
             timestamp = data["timestamp"]
             temp = float(data["temperature"])
-            state_str = data["state"]
             system_state.add_measurement(temp, timestamp)
             print(f"Temperatura registrata: {temp} °C")
-            print(f"Stato remoto: {state_str}")
             if system_state.get_state() == State.NORMAL:
                 send_message("esp32/state", {"state": "5000"})
             else:

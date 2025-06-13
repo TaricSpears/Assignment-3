@@ -5,12 +5,14 @@
 
 static State currentState;
 static unsigned long toohotStart = 0;
+static bool externalAlarm = false; // Flag per allarme esterno
 const float TEMP_HOT = 30.0;
 const float TEMP_TOOHOT = 40.0;
 
 void stateInit()
 {
     currentState = NORMAL;
+    externalAlarm = false;
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(RED_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
@@ -18,9 +20,41 @@ void stateInit()
     digitalWrite(RED_LED, LOW);
 }
 
+void forceAlarmState(bool alarmOn)
+{
+    externalAlarm = alarmOn;
+    if (alarmOn)
+    {
+        currentState = ALARM;
+        Serial.println("Allarme esterno attivato!");
+    }
+    else
+    {
+        Serial.println("Allarme esterno disattivato");
+        // Se non siamo in allarme per temperatura, torna a NORMAL
+        if (currentState == ALARM)
+        {
+            currentState = NORMAL;
+        }
+    }
+}
+
+bool isExternalAlarmActive()
+{
+    return externalAlarm;
+}
+
 void updateState(float temperature)
 {
     bool buttonPressed = digitalRead(BUTTON_PIN) == LOW;
+
+    // Se c'è un allarme esterno attivo, rimani in ALARM
+    if (externalAlarm)
+    {
+        currentState = ALARM;
+        return;
+    }
+
     switch (currentState)
     {
     case NORMAL:
@@ -48,8 +82,13 @@ void updateState(float temperature)
         }
         break;
     case ALARM:
+        // Il pulsante può resettare sia allarme temperatura che esterno
         if (buttonPressed)
+        {
             currentState = NORMAL;
+            externalAlarm = false; // Reset anche allarme esterno
+            toohotStart = 0;
+        }
         break;
     }
 }
@@ -65,7 +104,7 @@ const char *getStateString()
     case TOOHOT:
         return "TOOHOT";
     case ALARM:
-        return "ALARM";
+        return externalAlarm ? "ALARM_EXTERNAL" : "ALARM_TEMP";
     }
     return "UNKNOWN";
 }

@@ -14,6 +14,7 @@
 #define MQTT_USER ""                  // se usi auth
 #define MQTT_PASS ""                  // se usi auth
 #define PUB_TOPIC "esp32/temperature" // topic di pubblicazione
+#define SUB_TOPIC "esp32/alarm"       // topic per ricevere comandi di allarme
 
 // Pin definitions
 #define BUTTON_PIN 40

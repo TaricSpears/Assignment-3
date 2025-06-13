@@ -21,44 +21,63 @@ static unsigned long lastNetworkCheck = 0;
 
 void mqttCallback(char *topic, uint8_t *payload, unsigned int length)
 {
+  Serial.println("=== CALLBACK RICEVUTO ==="); // DEBUG
+
   String message = "";
   for (int i = 0; i < length; i++)
   {
     message += (char)payload[i];
   }
 
-  Serial.print("Comando ricevuto su ");
+  Serial.print("Topic: '");
   Serial.print(topic);
-  Serial.print(": ");
-  Serial.println(message);
+  Serial.print("' - Messaggio: '");
+  Serial.print(message);
+  Serial.println("'");
 
   // Gestisci comandi di stato dalla control unit
   if (String(topic) == "esp32/state")
   {
-    message.toLowerCase();
+    Serial.println("Topic esp32/state riconosciuto!");
 
-    if (message == "3000")
+    // PARSING JSON - il messaggio è {"state": "5000"}
+    StaticJsonDocument<100> doc;
+    DeserializationError error = deserializeJson(doc, message);
+
+    if (error)
+    {
+      Serial.print("Errore parsing JSON: ");
+      Serial.println(error.c_str());
+      return;
+    }
+
+    // Estrai il valore del campo "state"
+    String stateValue = doc["state"].as<String>();
+    Serial.print("Valore estratto: '");
+    Serial.print(stateValue);
+    Serial.println("'");
+
+    if (stateValue == "3000")
     {
       currentState = ESP32_NORMAL;
       readInterval = 3000;
-      Serial.println("Stato cambiato a: NORMAL");
+      Serial.println("Intervallo cambiato a 3000ms");
     }
-    else if (message == "5000")
+    else if (stateValue == "5000")
     {
       currentState = ESP32_NORMAL;
       readInterval = 5000;
-      Serial.println("Stato cambiato a: NORMAL (5 secondi)");
+      Serial.println("Intervallo cambiato a 5000ms");
     }
     else
     {
-      Serial.println("Comando stato non riconosciuto: " + message);
+      Serial.println("Comando non riconosciuto: '" + stateValue + "'");
     }
 
     // Reset errore di rete se riceviamo comandi
     networkError = false;
   }
 }
-
 void checkNetworkStatus()
 {
   // Controlla connessione WiFi

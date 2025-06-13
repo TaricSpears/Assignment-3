@@ -2,7 +2,6 @@ from enum import Enum
 import threading
 import time
 
-
 class State(Enum):
     NORMAL = 0
     HOT = 1

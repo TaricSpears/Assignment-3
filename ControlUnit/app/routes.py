@@ -2,7 +2,7 @@ from flask import Blueprint, current_app, jsonify, request, Response
 import json
 import random
 from app import system_state
-from app.state import Mode
+from app.state import Mode, State
 bp = Blueprint("routes", __name__)
 
 
@@ -49,4 +49,5 @@ def set_mode():
 
 @bp.route('/api/alarm', methods=['POST'])
 def alarm():
+    system_state.set_state(State.NORMAL)
     return Response(status=200)

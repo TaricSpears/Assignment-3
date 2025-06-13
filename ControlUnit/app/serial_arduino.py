@@ -18,7 +18,6 @@ def serial_loop():
     time.sleep(2)  # Wait for Arduino to reset
 
     while True:
-        # print('ciao')
         while ser.in_waiting:
             try:
                 line = ser.readline().decode('utf-8', errors='replace').strip()

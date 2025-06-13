@@ -1,8 +1,9 @@
+from time import time
 import paho.mqtt.client as mqtt
 import json
 
 from app import system_state
-from state import Mode
+from app.state import Mode
 
 # === CONFIGURAZIONE MQTT ===
 MQTT_SERVER = "test.mosquitto.org"  # IP locale del broker MQTT
@@ -33,7 +34,7 @@ def on_message(client, userdata, msg):
             state_str = data.get("state")
 
             # Aggiungi la temperatura allo stato
-            system_state.add_temperature(temp)
+            system_state.add_measurement(temp, int(time()))
             print(f"Temperatura registrata: {temp} °C")
 
             # Esegui azioni in base allo stato (opzionale)

@@ -1,5 +1,5 @@
 import { createTemperatureChart } from './chart.js';
-import { fetchTemperatureData, setMode, getMode, setWindowOpening, acknowledgeAlarm, getSystemState, getWindowOpening } from './api/client.js'; // Assuming client.js is in 'api' folder
+import { fetchTemperatureData, setWindowOpening, acknowledgeAlarm, getSystemState, getWindowOpening } from './api/client.js'; // Assuming client.js is in 'api' folder
 
 const ctx = document.getElementById('temperatureChart').getContext('2d');
 const chart = createTemperatureChart(ctx);
@@ -50,13 +50,11 @@ async function refreshData() {
         const temperature_data = await fetchTemperatureData();
         const window_opening = await getWindowOpening();
         const system_state = await getSystemState();
-        const mode = await getMode();
         if (temperature_data && temperature_data.length > 0) {
             chart.data.labels = temperature_data.map(e => new Date(e.timestamp).toLocaleTimeString());
             chart.data.datasets[0].data = temperature_data.map(e => e.temperature);
             chart.update();
         }
-        currentSystemMode = mode;
         currentState.temperature = temperature_data[temperature_data.length - 1].temperature;
         currentState.windowOpening = window_opening;
         currentState.state = system_state;
@@ -69,7 +67,6 @@ async function refreshData() {
 
 autoModeBtn.addEventListener('click', async () => {
     try {
-        await setMode('AUTOMATIC');
         currentSystemMode = 'AUTOMATIC';
         console.log('Mode set to AUTOMATIC');
         updateUI();
@@ -81,7 +78,6 @@ autoModeBtn.addEventListener('click', async () => {
 
 manualModeBtn.addEventListener('click', async () => {
     try {
-        await setMode('MANUAL');
         currentSystemMode = 'MANUAL';
         console.log('Mode set to MANUAL');
         updateUI();

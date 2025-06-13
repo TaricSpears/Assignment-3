@@ -15,28 +15,6 @@ def get_temperature():
     }for t in temperatures])
 
 
-@bp.route('/api/setmode', methods=['POST'])
-def set_mode():
-    print("Setting mode 123 ", request.get_json())
-    mode = request.get_json().get("mode", "AUTOMATIC")
-    if mode == "MANUAL":
-        system_state.set_mode(Mode.MANUAL)
-    elif mode == "AUTOMATIC":
-        system_state.set_mode(Mode.AUTOMATIC)
-    else:
-        return jsonify({"error": "Invalid mode"}), 400
-    return Response(status=200)
-
-
-@bp.route('/api/getmode', methods=['GET'])
-def get_mode():
-    print("Getting mode")
-    mode = system_state.get_mode()
-    return json.dumps({
-        "mode": mode.name
-    })
-
-
 @bp.route('/api/setwindow', methods=['POST'])
 def set_window_opening():
     system_state.set_window_opening(request.get_json().get("percentage", 0.0))

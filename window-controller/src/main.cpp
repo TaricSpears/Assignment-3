@@ -90,7 +90,6 @@ void loop() {
         }
         delete msg;
     }
-    // displayMessage(("received; " + String(cnt) + " messages").c_str());
 
     if (mode == Manual) {
         potentiometer->sync();
